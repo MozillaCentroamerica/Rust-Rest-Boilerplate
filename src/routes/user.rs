@@ -27,7 +27,7 @@ pub fn auth(data: Json<Login>) -> JsonValue {
 
     let mut header = json!({});
     let secret = "akdjfals";
-    let jwt = encode(&header, secret.to_string(), &payload, Algorithm::HS256).unwrap();
+    let jwt = encode(header, &secret.to_string(), &payload, Algorithm::HS256).unwrap();
 
 
     response.data = jwt;
