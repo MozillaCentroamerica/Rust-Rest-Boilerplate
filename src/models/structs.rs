@@ -1,6 +1,4 @@
 use serde::{Deserialize, Serialize};
-// A trait that the Validate derive will impl
-use validator::{Validate, ValidationError};
 
 #[derive(Serialize, Deserialize)]
 pub struct Response {
@@ -10,10 +8,8 @@ pub struct Response {
 }
 
 
-#[derive(Serialize, Deserialize,Validate)]
+#[derive(Serialize, Deserialize)]
 pub struct Login {
-    #[validate(length(min = "4"))]
     pub username: String,
-    #[validate(length(min = "4"))]
     pub password: String
 }
