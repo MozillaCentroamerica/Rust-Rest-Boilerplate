@@ -8,7 +8,7 @@ pub fn hola() -> content::Json<String> {
         message: "Hola Mundo!".to_owned(),
         data: "".to_owned()
     };
-    response.message = "Hola mundo 2!".to_owned();
+    response.message = "Hola mundo!".to_owned();
     let json_response: String = serde_json::to_string(&response).unwrap();
     content::Json(json_response)
 

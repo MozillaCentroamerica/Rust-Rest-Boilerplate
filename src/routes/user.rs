@@ -5,7 +5,7 @@ use rocket_contrib::json;
 use rocket_contrib::json::Json;
 use rocket_contrib::json::JsonValue;
 use serde_json::json as sjson;
-
+use rocket::request::{self, Request, FromRequest};
 use frank_jwt::{Algorithm, encode, decode};
 
 
@@ -30,7 +30,25 @@ pub fn auth(data: Json<Login>) -> JsonValue {
     let secret = "akdjfals";
     let jwt = encode(header, &secret.to_string(), &payload, Algorithm::HS256).unwrap();
 
-
     response.data = jwt;
     json!(response)
 }
+
+//#[get("/me", format = "application/json")]
+//impl<'a, 'r> rocket::request::Request<'a, 'r> for Response {
+//    type Error = ();
+//
+//    pub fn me(request: &'a rocket::Request<'r>,) -> JsonValue {
+//        let mut response = Response {
+//            status: 200,
+//            message: "Hola Mundo!".to_owned(),
+//            data: "".to_owned()
+//        };
+//
+//        let header_map = request.headers();
+//        response.data = header_map;
+//
+////    response.data = jwt;
+//        json!(response)
+//    }
+//}
