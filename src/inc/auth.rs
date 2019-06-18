@@ -23,7 +23,7 @@ pub fn read_token(key: &str) {
         "is_admin": true
     });
     let (header, payload) = decode(&key, &secret.to_string(), Algorithm::HS256).unwrap();
-    println!("{}", payload.username);
+    println!("{}", payload);
 }
 impl<'a, 'r> FromRequest<'a, 'r> for ApiKey {
     type Error = ();
