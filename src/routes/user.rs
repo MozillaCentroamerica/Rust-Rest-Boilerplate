@@ -7,6 +7,9 @@ use rocket_contrib::json::JsonValue;
 use serde_json::json as sjson;
 use rocket::request::{self, Request, FromRequest};
 use frank_jwt::{Algorithm, encode, decode};
+use rocket::Outcome;
+
+use crate::inc::auth::ApiKey;
 
 
 #[post("/auth", format = "application/json", data = "<data>")]
@@ -16,7 +19,6 @@ pub fn auth(data: Json<Login>) -> JsonValue {
         message: "Hola Mundo!".to_owned(),
         data: "".to_owned()
     };
-
 
     //HS256
     let mut payload = sjson!({
@@ -32,6 +34,18 @@ pub fn auth(data: Json<Login>) -> JsonValue {
 
     response.data = jwt;
     json!(response)
+}
+
+#[get("/me")]
+fn me(_key: ApiKey)-> JsonValue  {
+    let mut response = Response {
+        status: 200,
+        message: "Hola Mundo!".to_owned(),
+        data: "".to_owned()
+    };
+    response.data = "Holi".to_string();
+    json!(response)
+
 }
 
 //#[get("/me", format = "application/json")]
