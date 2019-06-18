@@ -32,7 +32,7 @@ fn main() {
     routes::hello::hola,
     routes::hello::hello_name
     ]).mount("/user", routes![
-    routes::user::auth
+    routes::user::auth,
     routes::user::me
     ]).
         register(catchers![not_found,unprocessable_entity])

@@ -37,7 +37,7 @@ pub fn auth(data: Json<Login>) -> JsonValue {
 }
 
 #[get("/me")]
-fn me(_key: ApiKey)-> JsonValue  {
+pub fn me(_key: ApiKey)-> JsonValue  {
     let mut response = Response {
         status: 200,
         message: "Hola Mundo!".to_owned(),
