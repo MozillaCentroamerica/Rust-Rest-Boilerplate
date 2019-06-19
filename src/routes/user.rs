@@ -38,7 +38,7 @@ pub fn auth(data: Json<Login>) -> JsonValue {
 
 #[get("/me", format = "application/json",)]
 pub fn profile(user: User)-> JsonValue  {
-    let message: String = format!("El username loggeado es {}",user.password);
+    let message: String = format!("El username loggeado es {}",user.username);
     println!("{}",message);
     let mut response = Response {
         status: 200,
