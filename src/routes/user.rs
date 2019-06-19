@@ -4,12 +4,12 @@ use crate::models::structs::Login;
 use rocket_contrib::json;
 use rocket_contrib::json::Json;
 use rocket_contrib::json::JsonValue;
-use serde_json::json as sjson;
+use serde_json::{json as sjson, Value};
 use rocket::request::{self, Request, FromRequest};
 use frank_jwt::{Algorithm, encode, decode};
 use rocket::Outcome;
+use crate::models::structs::User;
 
-use crate::inc::auth::ApiKey;
 
 
 #[post("/auth", format = "application/json", data = "<data>")]
@@ -36,11 +36,13 @@ pub fn auth(data: Json<Login>) -> JsonValue {
     json!(response)
 }
 
-#[get("/me")]
-pub fn me(_key: ApiKey)-> JsonValue  {
+#[get("/me", format = "application/json",)]
+pub fn profile(user: User)-> JsonValue  {
+    let message: String = format!("El username loggeado es {}",user.password);
+    println!("{}",message);
     let mut response = Response {
         status: 200,
-        message: "Hola Mundo!".to_owned(),
+        message: message,
         data: "".to_owned()
     };
     response.data = "Holi".to_string();
