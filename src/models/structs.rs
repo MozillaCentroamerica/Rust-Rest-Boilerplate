@@ -40,14 +40,14 @@ impl<'a, 'r> FromRequest<'a, 'r> for User {
             return Outcome::Forward(());
         }
         let secret = "akdjfals";
-        let mut header = json!({});
-        let mut payload = json!({
+        let header = json!({});
+        let payload = json!({
         "username": "",
         "password": "",
         "id": 0,
         "is_admin": true
     });
-        let mut bearer_splited = keys[0].split(" ");
+        let bearer_splited = keys[0].split(" ");
         let mut jwt= "";
         for s in bearer_splited {
             jwt=s; // the last one is the jwt
@@ -57,7 +57,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for User {
             let (header, payload) = decoded_data.unwrap();
             println!("User logged in : {}", payload["username"]);
 
-            let mut user: User = User{
+            let user: User = User{
                 username: payload["username"].to_string(),
                 password: payload["password"].to_string(),
                 is_admin: false,

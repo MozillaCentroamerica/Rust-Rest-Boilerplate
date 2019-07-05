@@ -9,8 +9,9 @@ use rocket::request::{self, Request, FromRequest};
 use frank_jwt::{Algorithm, encode, decode};
 use rocket::Outcome;
 use crate::models::structs::User;
-
-
+use crate::inc::db::{mongo_client};
+use mongodb::{Bson, bson, doc};
+use bcrypt::{DEFAULT_COST, hash, verify};
 
 #[post("/auth", format = "application/json", data = "<data>")]
 pub fn auth(data: Json<Login>) -> JsonValue {
@@ -20,19 +21,66 @@ pub fn auth(data: Json<Login>) -> JsonValue {
         data: "".to_owned()
     };
 
-    //HS256
-    let mut payload = sjson!({
-    "username": data.0.username,
-    "password": data.0.password,
-    "id": 0,
-    "is_admin": true
-});
+    let coll = mongo_client("users".to_string());
 
-    let mut header = sjson!({});
-    let secret = "akdjfals";
-    let jwt = encode(header, &secret.to_string(), &payload, Algorithm::HS256).unwrap();
+    let username = data.0.username;
+    let password = data.0.password;
+    let hashed_password = hash(&password, DEFAULT_COST).unwrap();
+    let doc_find = doc! {
+        "username": &username,
+    };
+//    let doc = doc! {
+//        "username": &username,
+//        "password": &hashed_password,
+//    };
 
-    response.data = jwt;
+    // Insert document into 'test.movies' collection
+//    coll.insert_one(doc.clone(), None)
+//        .ok().expect("Failed to insert document.");
+
+    // Find the document and receive a cursor
+    let mut cursor = coll.find(Some(doc_find.clone()), None)
+        .ok().expect("Failed to execute find.");
+
+    let item = cursor.next();
+
+    // cursor.next() returns an Option<Result<Document>>
+    match item {
+        Some(Ok(doc)) => match doc.get("password") {
+            Some(&Bson::String(ref title)) => {
+                println!(" Password is: {}", title);
+                let valid = verify(&password, &title).unwrap();
+                println!(" Password is: {}", valid);
+                if(valid){
+                    response.status = 200;
+                    response.message = "Usuario valido".to_string();
+                    //HS256
+                    let payload = sjson!({
+                        "username": username,
+                        "id": 0,
+                        "is_admin": true
+                    });
+
+                    let header = sjson!({});
+                    let secret = "akdjfals";
+                    let jwt = encode(header, &secret.to_string(), &payload, Algorithm::HS256).unwrap();
+
+                    response.data = jwt;
+                }else{
+                    response.status = 403;
+                    response.message = "Usuario no valido".to_string()
+                }
+
+            },
+            _ => panic!("Expected title to be a string!"),
+        },
+        Some(Err(_)) => panic!("Failed to get next from server!"),
+        None => {
+            panic!("Server returned no results!");
+            response.status = 403;
+            response.message = "Usuario no valido".to_string()
+        },
+    }
     json!(response)
 }
 
@@ -49,22 +97,3 @@ pub fn profile(user: User)-> JsonValue  {
     json!(response)
 
 }
-
-//#[get("/me", format = "application/json")]
-//impl<'a, 'r> rocket::request::Request<'a, 'r> for Response {
-//    type Error = ();
-//
-//    pub fn me(request: &'a rocket::Request<'r>,) -> JsonValue {
-//        let mut response = Response {
-//            status: 200,
-//            message: "Hola Mundo!".to_owned(),
-//            data: "".to_owned()
-//        };
-//
-//        let header_map = request.headers();
-//        response.data = header_map;
-//
-////    response.data = jwt;
-//        json!(response)
-//    }
-//}
