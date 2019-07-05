@@ -2,9 +2,9 @@
 Rust restfull example with JTW
 
 ## Install Rust
-- `curl https://sh.rustup.rs -sSf | sh`
-- `rustup install nightly`
-- `rustup override set nightly`
+- Install rust `curl https://sh.rustup.rs -sSf | sh`
+- Install nightly version `rustup install nightly`
+- Set nightly version as default for our project `rustup override set nightly`
 
 ## Configure project
 - Copy .env.example to .env
